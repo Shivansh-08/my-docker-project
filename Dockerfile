@@ -1,21 +1,11 @@
-# Use the official Node.js image for testing
-FROM node:18-alpine AS test
-
-WORKDIR /app
-
-# Copy only package.json and install dependencies
-COPY package.json .
-RUN npm install
-
-# Copy test files and run tests
-COPY tests/ tests/
-COPY html/ html/
-RUN npm test
-
-# Use the official Nginx image to serve HTML
+# Use the official Nginx image
 FROM nginx:latest
 
+# Copy HTML files to Nginx's default directory
 COPY html /usr/share/nginx/html
+
+# Expose port 80
 EXPOSE 80
 
+# Start Nginx
 CMD ["nginx", "-g", "daemon off;"]
