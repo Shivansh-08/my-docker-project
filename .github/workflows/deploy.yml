@@ -1,4 +1,4 @@
-name: Docker CI/CD Pipeline
+name: Deploy to AWS EC2
 
 on:
   push:
@@ -7,43 +7,39 @@ on:
 
 jobs:
   test:
-    name: Run Unit and Integration Tests
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Install Dependencies
-        run: npm install
+      - name: Set up Docker
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y docker.io
 
       - name: Run Unit Tests
-        run: npm test
+        run: bash tests/unit_test.sh
 
       - name: Run Integration Tests
-        run: npm run test:integration
+        run: bash tests/integration_test.sh
 
   deploy:
-    name: Deploy to AWS EC2
-    runs-on: self-hosted
-    needs: test  # Ensures tests pass before deployment
+    runs-on: self-hosted  # Runs on your EC2 instance
+    needs: test  # Deploy only if tests pass
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
 
       - name: Build Docker Image
-        run: docker build -t my-docker-app .
+        run: docker build -t my-html-app .
 
       - name: Stop and Remove Old Container
         run: |
-          docker stop my-docker-container || true
-          docker rm my-docker-container || true
+          if docker ps -q -f name=my-html-container; then
+            docker stop my-html-container
+            docker rm my-html-container
+          fi
 
       - name: Run New Container
-        run: docker run -d -p 8080:80 --name my-docker-container my-docker-app
+        run: docker run -d -p 8080:80 --name my-html-container my-html-app
