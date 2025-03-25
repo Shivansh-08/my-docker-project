@@ -1,0 +1,14 @@
+{
+  "name": "my-docker-project",
+  "version": "1.0.0",
+  "description": "A Dockerized Node.js project",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "test:integration": "jest --config jest.integration.config.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^29.0.0"
+  }
+}
