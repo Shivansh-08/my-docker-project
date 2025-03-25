@@ -1,8 +1,9 @@
 const request = require('supertest');
-const app = require('../server'); // Adjust the path
+
+const BASE_URL = 'http://localhost';
 
 test('GET / should return Hello from Docker', async () => {
-    const res = await request(app).get('/');
-    expect(res.statusCode).toEqual(200);
+    const res = await request(BASE_URL).get('/');
+    expect(res.statusCode).toBe(200);
     expect(res.text).toContain('Hello from Docker');
 });
